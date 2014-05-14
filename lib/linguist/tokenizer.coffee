@@ -44,6 +44,10 @@ class Tokenizer
     s = new StringScanner(data)
     tokens = []
 
+    console.log data
+    console.log s.bol()
+    console.log START_SINGLE_LINE_COMMENT
+    console.log s.scan /s*\/\/ |s*# |s*% /
     until s.eos()
       break if s.pos >= BYTE_LIMIT
 

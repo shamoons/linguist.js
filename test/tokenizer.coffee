@@ -1,6 +1,5 @@
 require '../lib/linguist'
 
-_ = require 'lodash'
 should = require 'should'
 {Tokenizer} = require '../lib/linguist/tokenizer'
 
@@ -26,3 +25,6 @@ describe 'Tokenizer', ->
     tokenize('add(123, 456)').should.eql ['add', '(', ')']
     tokenize('0x01 | 0x10').should.eql ['|']
     tokenize('500.42 * 1.0').should.eql ['*']
+
+  it.only 'should skip comments', ->
+    tokenize("foo\n# Comment").should.eql ['foo']
