@@ -26,5 +26,13 @@ describe 'Tokenizer', ->
     tokenize('0x01 | 0x10').should.eql ['|']
     tokenize('500.42 * 1.0').should.eql ['*']
 
-  it.only 'should skip comments', ->
+  it 'should skip comments', ->
     tokenize("foo\n# Comment").should.eql ['foo']
+    tokenize("foo\n# Comment\nbar").should.eql ['foo', 'bar']
+    tokenize("foo\n// Comment").should.eql ['foo']
+    tokenize("foo /* Comment */").should.eql ['foo']
+    tokenize("foo /* \nComment\n */").should.eql ['foo']
+    tokenize("foo <!-- Comment -->").should.eql ['foo']
+    tokenize("foo {- Comment -}").should.eql ['foo']
+    tokenize("foo (* Comment *)").should.eql ['foo']
+    tokenize("2 % 10\n% Comment").should.eql ['%']

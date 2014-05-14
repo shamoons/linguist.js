@@ -27,12 +27,12 @@ class Tokenizer
 
 
   START_SINGLE_LINE_COMMENT = new RegExp _.map(SINGLE_LINE_COMMENTS, (c) ->
-    "\\s*#{RegExp.escape(c)} "
+    "\s*#{RegExp.escape(c)} "
   ).join('|')
 
 
   START_MULTI_LINE_COMMENT = new RegExp _.map(MULTI_LINE_COMMENTS, (c) ->
-    RegExp.escape(c)
+    RegExp.escape(c[0])
   ).join('|')
 
   tokenize: (data) ->
@@ -42,13 +42,6 @@ class Tokenizer
     s = new StringScanner(data)
     tokens = []
 
-    # console.log data
-    # console.log s.atBOL()
-    # console.log START_SINGLE_LINE_COMMENT
-    # console.log START_SINGLE_LINE_COMMENT.exec(data)
-    console.log s.scan(START_SINGLE_LINE_COMMENT)
-
-    # console.log data.substr(0).search(START_SINGLE_LINE_COMMENT)
     until s.hasTerminated()
       break if s.pos >= BYTE_LIMIT
 
@@ -58,13 +51,16 @@ class Tokenizer
 
       #Single line comment
       else if s.atBOL() and token = s.scan(START_SINGLE_LINE_COMMENT)
-        console.log s
         s.skipUntil(/\n|$/)
-        console.log s
 
       # Multiline comments
       else if token = s.scan(START_MULTI_LINE_COMMENT)
-        throw "NEED TO DO THIS!"
+        MULTI_LINE_COMMENTS_flat = _.flatten MULTI_LINE_COMMENTS
+        close_token = MULTI_LINE_COMMENTS_flat[_.indexOf(MULTI_LINE_COMMENTS_flat, token) + 1]
+
+        close_token_regex = new RegExp RegExp.escape(close_token)
+
+        s.skipUntil(close_token_regex)
 
       # Skip single or double quoted strings
       else if s.scan(/"/)
@@ -83,7 +79,8 @@ class Tokenizer
 
       # SGML style brackets
       else if token = s.scan(/<[^\s<>][^<>]*>/)
-        # extract_sgml_tokens(token).each { |t| tokens << t }
+        _.forEach extract_sgml_tokens(token), (t) ->
+          tokens.push t
 
       # Common programming punctuation
       else if token = s.scan(/;|\{|\}|\(|\)|\[|\]/)
@@ -102,6 +99,42 @@ class Tokenizer
 
     tokens
 
+  extract_sgml_tokens = (data) ->
+    s = new StringScanner data
+
+    tokens = []
+
+    until s.hasTerminated()
+      # Emit start token
+      if token = s.scan(/<\/?[^\s>]+/)
+        tokens.push "#{token}>"
+
+      # Emit attributes with trailing =
+      else if token = s.scan(/\w+=/)
+        tokens.push token
+
+        # Then skip over attribute value
+        if s.scan(/"/)
+          s.skipUntil(/[^\\]"/)
+        else if s.scan(/'/)
+          s.skipUntil(/[^\\]'/)
+        else
+          s.skipUntil(/\w+/)
+
+      # Emit lone attributes
+      else if token = s.scan(/\w+/)
+        tokens.push token
+
+      # Stop at the end of the tag
+      else if s.scan(/>/)
+        s.terminate()
+
+      else
+        s.scanChar()
+      end
+    end
+
+    tokens
 
 
 
