@@ -19,7 +19,8 @@
   "dependencies": {
     "mime": "~1.2.11",
     "lodash": "~2.4.1",
-    "StringScanner": "0.0.3"
+    "StringScanner": "0.0.3",
+    "pstrscan": "~0.1.6"
   },
   "devDependencies": {
     "should": "~3.3.1"

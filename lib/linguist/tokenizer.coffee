@@ -1,5 +1,5 @@
 _ = require 'lodash'
-StringScanner = require 'StringScanner'
+StringScanner = require 'pstrscan'
 
 class Tokenizer
   # Read up to 100KB
@@ -25,17 +25,15 @@ class Tokenizer
   RegExp.escape = (str) ->
     String(str).replace /([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"
 
-  singleLineArray = []
-  _.forEach SINGLE_LINE_COMMENTS, (c) ->
-    singleLineArray.push "\s*#{RegExp.escape(c)} "
 
-  START_SINGLE_LINE_COMMENT = new RegExp singleLineArray.join('|')
+  START_SINGLE_LINE_COMMENT = new RegExp _.map(SINGLE_LINE_COMMENTS, (c) ->
+    "\\s*#{RegExp.escape(c)} "
+  ).join('|')
 
-  multipleLineArray = []
-  _.forEach SINGLE_LINE_COMMENTS, (c) ->
-    multipleLineArray.push RegExp.escape c[0]
 
-  START_MULTI_LINE_COMMENT = new RegExp multipleLineArray.join('|')
+  START_MULTI_LINE_COMMENT = new RegExp _.map(MULTI_LINE_COMMENTS, (c) ->
+    RegExp.escape(c)
+  ).join('|')
 
   tokenize: (data) ->
     extract_tokens(data)
@@ -44,11 +42,14 @@ class Tokenizer
     s = new StringScanner(data)
     tokens = []
 
-    console.log data
-    console.log s.bol()
-    console.log START_SINGLE_LINE_COMMENT
-    console.log s.scan /s*\/\/ |s*# |s*% /
-    until s.eos()
+    # console.log data
+    # console.log s.atBOL()
+    # console.log START_SINGLE_LINE_COMMENT
+    # console.log START_SINGLE_LINE_COMMENT.exec(data)
+    console.log s.scan(START_SINGLE_LINE_COMMENT)
+
+    # console.log data.substr(0).search(START_SINGLE_LINE_COMMENT)
+    until s.hasTerminated()
       break if s.pos >= BYTE_LIMIT
 
       if token = s.scan(/^#!.+$/)
@@ -56,8 +57,10 @@ class Tokenizer
           tokens.push "SHEBANG#!#{name}"
 
       #Single line comment
-      else if s.bol() and token = s.scan(START_SINGLE_LINE_COMMENT)
-        s.skipUntil(/\n|\Z/)
+      else if s.atBOL() and token = s.scan(START_SINGLE_LINE_COMMENT)
+        console.log s
+        s.skipUntil(/\n|$/)
+        console.log s
 
       # Multiline comments
       else if token = s.scan(START_MULTI_LINE_COMMENT)
@@ -66,12 +69,12 @@ class Tokenizer
       # Skip single or double quoted strings
       else if s.scan(/"/)
         if s.peek(1) is "\""
-          s.getch()
+          s.scanChar()
         else
           w = s.skipUntil(/[^\\]"/)
       else if s.scan(/'/)
         if s.peek(1) is "'"
-          s.getch()
+          s.scanChar()
         else
           s.skipUntil(/[^\\]'/)
 
@@ -95,7 +98,7 @@ class Tokenizer
         tokens.push token
 
       else
-        s.getch()
+        s.scanChar()
 
     tokens
 
