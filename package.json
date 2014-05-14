@@ -1,0 +1,27 @@
+{
+  "name": "linguist.js",
+  "version": "0.0.1",
+  "description": "A JS port of the GitHub Linguist Module",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script/register -R"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/shamoons/linguist.js.git"
+  },
+  "author": "Shamoon Siddiqui",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/shamoons/linguist.js/issues"
+  },
+  "homepage": "https://github.com/shamoons/linguist.js",
+  "dependencies": {
+    "mime": "~1.2.11",
+    "lodash": "~2.4.1",
+    "StringScanner": "0.0.3"
+  },
+  "devDependencies": {
+    "should": "~3.3.1"
+  }
+}
