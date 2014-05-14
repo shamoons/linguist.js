@@ -44,7 +44,6 @@ class Tokenizer
     s = new StringScanner(data)
     tokens = []
 
-
     until s.eos()
       break if s.pos >= BYTE_LIMIT
 
@@ -65,7 +64,7 @@ class Tokenizer
         if s.peek(1) is "\""
           s.getch()
         else
-          s.skipUntil(/[^\\]"/)
+          w = s.skipUntil(/[^\\]"/)
       else if s.scan(/'/)
         if s.peek(1) is "'"
           s.getch()

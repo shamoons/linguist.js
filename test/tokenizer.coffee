@@ -1,5 +1,6 @@
 require '../lib/linguist'
 
+_ = require 'lodash'
 should = require 'should'
 {Tokenizer} = require '../lib/linguist/tokenizer'
 
@@ -10,15 +11,18 @@ tokenize = (data) ->
 
 describe 'Tokenizer', ->
   it 'should skip string literals', ->
-    tokenize('print ""')[0].should.equal 'print'
-    tokenize('print ""')[0].should.equal 'print'
-    tokenize('print "Josh"')[0].should.equal 'print'
-    tokenize("print 'Josh'")[0].should.equal 'print'
-    tokenize('print "Hello \"Josh\""')[0].should.equal 'print'
-    tokenize("print 'Hello \\'Josh\\''")[0].should.equal 'print'
-    tokenize("print \"Hello\", \"Josh\"")[0].should.equal 'print'
-    tokenize("print 'Hello', 'Josh'")[0].should.equal 'print'
-    tokenize("print \"Hello\", \"\", \"Josh\"")[0].should.equal 'print'
-    tokenize("print 'Hello', '', 'Josh'")[0].should.equal 'print'
+    tokenize('print ""').should.eql ['print']
+    tokenize('print "Josh"').should.eql ['print']
+    tokenize("print 'Josh'").should.eql ['print']
+    tokenize('print "Hello \\"Josh\\""').should.eql ['print']
+    tokenize("print 'Hello \\'Josh\\''").should.eql ['print']
+    tokenize("print \"Hello\", \"Josh\"").should.eql ['print']
+    tokenize("print 'Hello', 'Josh'").should.eql ['print']
+    tokenize("print \"Hello\", \"\", \"Josh\"").should.eql ['print']
+    tokenize("print 'Hello', '', 'Josh'").should.eql ['print']
 
   it 'should skip number literals', ->
+    tokenize('1 + 1').should.eql ['+']
+    tokenize('add(123, 456)').should.eql ['add', '(', ')']
+    tokenize('0x01 | 0x10').should.eql ['|']
+    tokenize('500.42 * 1.0').should.eql ['*']
