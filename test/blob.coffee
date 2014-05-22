@@ -30,7 +30,9 @@ describe 'File Blobs', ->
 
     done()
   
-  it 'should identify the content type', (done) ->
+  it.only 'should identify the content type', (done) ->
+    console.log blob('Binary/foo.pdf').content_type()
+    blob('Binary/foo.pdf').content_type().should.eql 'application/pdf'
     done()
 
   it 'should identify the disposition', (done) ->

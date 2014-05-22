@@ -1,3 +1,5 @@
+fs = require 'fs'
+
 BlobHelper = require './blob_helper'
 
 class FileBlob extends BlobHelper
@@ -5,6 +7,10 @@ class FileBlob extends BlobHelper
     super
     @path = path
     @name = if base_path? then path.replace("#{base_path}/", '') else path
+
+
+  data: ->
+    fs.readFileSync @path
 
 
   # # Read up to 100KB
