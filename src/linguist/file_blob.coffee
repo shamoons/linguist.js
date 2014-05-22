@@ -2,11 +2,9 @@ BlobHelper = require './blob_helper'
 
 class FileBlob extends BlobHelper
   constructor: (path, base_path = null) ->
+    super
     @path = path
     @name = if base_path? then path.replace("#{base_path}/", '') else path
-
-    super
-
 
 
   # # Read up to 100KB

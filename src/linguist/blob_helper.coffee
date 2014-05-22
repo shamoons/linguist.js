@@ -1,18 +1,11 @@
-mime = require 'mime'
+mime = require 'mime-types'
 path = require 'path'
 
 class BlobHelper
-  extname: (fileName) ->
-    path.extname fileName
-
-  # _mime_type: (fileName) ->
-  #   if @_mime_type?
-  #     return @_mime_type
-  #   else
-  #     guesses = mime.lookup extname fileName
-
-  #     console.log guesses
-
+  extname: ->
+    path.extname @name
 
   mime_type: ->
-    'text/plain'
+    mime.lookup(path.basename @name) || 'text/plain'
+
+module.exports = BlobHelper
