@@ -1,3 +1,4 @@
+require 'programming-language-classifier'
 # require 'linguist/blob_helper'
 # require 'linguist/generated'
 # require 'linguist/heuristics'
