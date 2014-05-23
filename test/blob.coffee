@@ -52,6 +52,15 @@ describe 'File Blobs', ->
         done()
 
   it 'should identify the disposition', (done) ->
+    blob('Binary/foo bar.jar').disposition().should.eql 'attachment; filename=foo+bar.jar'
+    blob("Binary/foo.bin").disposition().should.eql 'attachment; filename=foo.bin'
+    blob("Binary/linguist.gem").disposition().should.eql 'attachment; filename=linguist.gem'
+    blob("Binary/octocat.ai").disposition().should.eql 'attachment; filename=octocat.ai'
+    blob("Text/README").disposition().should.eql 'inline'
+    blob("Text/foo.txt").disposition().should.eql 'inline'
+    blob("Ruby/grit.rb").disposition().should.eql 'inline'
+    blob("Binary/octocat.png").disposition().should.eql 'inline'
+
     done()
 
   it 'should properly load the data of a file', (done) ->
