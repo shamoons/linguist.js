@@ -19,7 +19,7 @@
   "homepage": "https://github.com/shamoons/linguist.js",
   "dependencies": {
     "programming-language-classifier": "~1.0.0",
-    "mime-types": "~1.0.0"
+    "tika": "~0.3.0"
   },
   "devDependencies": {
     "linguist-samples": "~1.1.5"

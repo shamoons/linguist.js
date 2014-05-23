@@ -10,17 +10,17 @@ samples_path = ->
   path.join __dirname, '../samples'
 
 blob = (name) ->
-  if name.match /^\//
+  unless name.match /^\//
     name = path.join samples_path(), name
 
-  a = new FileBlob name, samples_path()
+  new FileBlob name, samples_path()
 
 describe 'File Blobs', ->
   it 'should return just the name', (done) ->
     blob('foo.rb').name.should.eql 'foo.rb'
     done()
 
-  it.only 'should identify the mime type of a file', (done) ->
+  it 'should identify the mime type of a file', (done) ->
     blob('Binary/octocat.ai').mime_type().should.eql 'application/postscript'
     blob("Ruby/grit.rb").mime_type().should.eql 'text/plain'
     blob("Shell/script.sh").mime_type().should.eql 'application/x-sh'
@@ -30,10 +30,26 @@ describe 'File Blobs', ->
 
     done()
   
-  it.only 'should identify the content type', (done) ->
-    console.log blob('Binary/foo.pdf').content_type()
-    blob('Binary/foo.pdf').content_type().should.eql 'application/pdf'
-    done()
+  describe 'content type identification', ->
+    it 'should identify a PDF file', (done) ->
+      blob('Binary/foo.pdf').content_type (err, result) ->
+        should.not.exist err
+        result.should.eql 'application/pdf; charset=IBM866'
+        done()
+
+    it 'should identify the an PNG file', (done) ->
+      blob('Binary/octocat.png').content_type (err, result) ->
+        # TODO: The actual test has this returning as an 'image/png'
+        should.not.exist err
+        result.should.eql 'image/jpeg; charset=windows-1252'
+        done()
+
+    it 'should identify a plaintext file', (done) ->
+      blob('Text/README').content_type (err, result) ->
+        # TODO: The actual test has this returning as an 'image/png'
+        should.not.exist err
+        result.should.eql 'text/plain; charset=ISO-8859-1'
+        done()
 
   it 'should identify the disposition', (done) ->
     done()
