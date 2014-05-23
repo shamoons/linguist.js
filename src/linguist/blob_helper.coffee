@@ -46,6 +46,15 @@ class BlobHelper
     else
       []
 
+  loc: ->
+    @lines().length
+
+  sloc: ->
+    sloc = _.filter @lines(), (line) ->
+      not _.isEmpty(line.trim())
+
+    sloc.length
+
 
 
 module.exports = BlobHelper
