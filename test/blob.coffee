@@ -64,7 +64,27 @@ describe 'File Blobs', ->
     done()
 
   it 'should properly load the data of a file', (done) ->
+    blob('Ruby/foo.rb').data().should.eql 'module Foo\nend\n'
     done()
 
-  it 'should split a file by lines', (done) ->
+  it.only 'should split a file by lines', (done) ->
+    blob("Ruby/foo.rb").lines().should.eql ["module Foo", "end", ""]
+    blob("Text/mac.txt").lines().should.eql ["line 1", "line 2", ""]
+    blob("Emacs Lisp/ess-julia.el").lines().length.should.eql 475
     done()
+
+  it 'should return the size of a file', (done) ->
+    done()
+
+  it 'should return the lines in a file', (done) ->
+    done()
+
+  it 'should return the source lines of code in a file', (done) ->
+    done()
+
+
+
+
+
+
+

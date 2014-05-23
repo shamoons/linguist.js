@@ -9,7 +9,10 @@ class FileBlob extends BlobHelper
     @name = if base_path? then path.replace("#{base_path}/", '') else path
     
   data: ->
-    fs.readFileSync @path
+    fs.readFileSync @path, 'utf-8'
+
+  size: ->
+    fs.statSync(@path).size
 
 
 

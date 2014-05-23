@@ -5,6 +5,8 @@ path = require 'path'
 tika = require 'tika'
 
 class BlobHelper
+  MEGABYTE = 1024 * 1024
+
   extname: ->
     path.extname(@name).toLowerCase()
 
@@ -29,10 +31,21 @@ class BlobHelper
   isText: ->
     istextorbinary.isTextSync @path, @data()
 
-  # isText: ->
-
   isImage: =>
     -1 isnt _.indexOf ['.png', '.jpg', '.jpeg', '.gif'], @extname()
+
+  isLarge: ->
+    @size() > MEGABYTE
+
+  isViewable: ->
+    not @isLarge() and @isText()
+
+  lines: ->
+    if @isViewable() and @data()
+      @data().split(/\r\n|\r|\n/)
+    else
+      []
+
 
 
 module.exports = BlobHelper
