@@ -84,10 +84,3 @@ describe 'File Blobs', ->
   it.only 'should return the source lines of code in a file', (done) ->
     blob("Ruby/foo.rb").sloc().should.eql 2
     done()
-
-
-
-
-
-
-
